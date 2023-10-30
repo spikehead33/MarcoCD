@@ -31,11 +31,15 @@ var serverCmd = &cobra.Command{
 		}
 
 		appController := appcontroller.New(nc)
-		repomonitor := repomonitor.New(
+		repomonitor, err := repomonitor.New(
 			serverSetting.GitHubAppID,
 			serverSetting.GitHubAppInstallationID,
 			serverSetting.GitHubAppPrivateKeyPath,
 		)
+
+		if err != nil {
+			panic(err)
+		}
 
 		s := pkg.NewServer(appController, repomonitor)
 		pkg.StartServer(":3000", s)
