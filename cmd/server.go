@@ -44,8 +44,8 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(serverCmd)
-	rootCmd.Flags().Int64VarP(&serverSetting.GitHubAppID, "githubAppID", "g", 123, "GitHub App ID for github authentication")
-	rootCmd.Flags().Int64VarP(&serverSetting.GitHubAppInstallationID, "githubAppInstallationID", "i", 456, "GitHub App Installation ID for github authentication")
-	rootCmd.Flags().StringVarP(&serverSetting.GitHubAppPrivateKeyPath, "githubAppPrivateKeyPath", "k", "githubapp.pem", "GitHub App Private Key for github authentication")
-	rootCmd.Flags().StringVarP(&serverSetting.GitOpsRepoPath, "repo", "p", "", "GitOps repository codebase path. remote path or local path are both acceptable")
+	serverCmd.Flags().Int64VarP(&serverSetting.GitHubAppID, "githubAppID", "g", 123, "GitHub App ID for github authentication")
+	serverCmd.Flags().Int64VarP(&serverSetting.GitHubAppInstallationID, "githubAppInstallationID", "i", 456, "GitHub App Installation ID for github authentication")
+	serverCmd.Flags().StringVarP(&serverSetting.GitHubAppPrivateKeyPath, "githubAppPrivateKeyPath", "k", "githubapp.pem", "GitHub App Private Key for github authentication")
+	serverCmd.Flags().StringVarP(&serverSetting.GitOpsRepoPath, "repo", "p", "", "GitOps repository codebase path. remote path or local path are both acceptable")
 }

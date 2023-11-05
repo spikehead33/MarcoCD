@@ -37,7 +37,7 @@ func (pack *packager) Package() error {
 	}
 
 	deliverables := manifest.Deliverables
-	resources := []string{}
+	resources := []string{pack.in} // add the marcocd.yaml, the manifest into the tar target
 
 	for _, deliverables := range deliverables {
 		resources = append(resources, deliverables.Resources...)

@@ -1,10 +1,10 @@
 package domains
 
 type ModuleManifest struct {
-	Name              string        `yaml:"name"`
+	Name              string        `yaml:"module"`
 	Deliverables      []Deliverable `yaml:"deliverables"`
+	Dependencies      []string      `yaml:"dependencies"`
 	ModuleLevelValues Values
-	Dependencies      []string `yaml:"dependencies"`
 }
 
 // module level values will be override by deliverable level values

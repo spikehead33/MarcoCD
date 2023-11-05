@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"marcocd/pkg/applications"
 	"marcocd/pkg/infras/manifest_reader"
 	"marcocd/pkg/infras/tar_executor"
@@ -26,8 +25,6 @@ var packageCmd = &cobra.Command{
 	Short: "package a macrocd module",
 	Long:  `package a marcocd module into a zipped Tarball`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("marcocd package called")
-
 		packager := applications.NewPackager(
 			pFlags.path,
 			pFlags.output,
@@ -43,7 +40,7 @@ var packageCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(packageCmd)
-	packageCmd.Flags().StringVar(&pFlags.path, "path", ".", "module root path")
+	packageCmd.Flags().StringVar(&pFlags.path, "path", "marcocd.yaml", "module root path")
 	packageCmd.Flags().StringVar(&pFlags.version, "version", "0.0.0", "package version")
 	packageCmd.Flags().StringVar(&pFlags.output, "output", "", "output of the packaged files")
 }

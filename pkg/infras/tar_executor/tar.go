@@ -1,6 +1,9 @@
 package tar_executor
 
-import "os/exec"
+import (
+	"fmt"
+	"os/exec"
+)
 
 type TarExecutor struct {
 }
@@ -8,6 +11,8 @@ type TarExecutor struct {
 func (executor *TarExecutor) Tar(tarName string, files []string) error {
 	args := []string{"-cf", tarName}
 	args = append(args, files...)
+
+	fmt.Println(args)
 
 	cmd := exec.Command("tar", args...)
 	if err := cmd.Run(); err != nil {
