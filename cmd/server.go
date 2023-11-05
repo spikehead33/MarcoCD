@@ -4,12 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"marcocd/pkg"
-	"marcocd/pkg/appcontroller"
-	"marcocd/pkg/repomonitor"
 	"marcocd/pkg/settings"
 
-	nomad "github.com/hashicorp/nomad/api"
 	"github.com/spf13/cobra"
 )
 
@@ -25,24 +21,24 @@ var serverCmd = &cobra.Command{
 		// fmt.Println(serverSetting.GitHubAppInstallationID)
 		// fmt.Println(serverSetting.GitHubAppPrivateKeyPath)
 
-		nc, err := nomad.NewClient(nomad.DefaultConfig())
-		if err != nil {
-			panic(err)
-		}
+		// nc, err := nomad.NewClient(nomad.DefaultConfig())
+		// if err != nil {
+		// 	panic(err)
+		// }
 
-		appController := appcontroller.New(nc)
-		repomonitor, err := repomonitor.New(
-			serverSetting.GitHubAppID,
-			serverSetting.GitHubAppInstallationID,
-			serverSetting.GitHubAppPrivateKeyPath,
-		)
+		// appController := appcontroller.New(nc)
+		// repomonitor, err := repomonitor.New(
+		// 	serverSetting.GitHubAppID,
+		// 	serverSetting.GitHubAppInstallationID,
+		// 	serverSetting.GitHubAppPrivateKeyPath,
+		// )
 
-		if err != nil {
-			panic(err)
-		}
+		// if err != nil {
+		// 	panic(err)
+		// }
 
-		s := pkg.NewServer(appController, repomonitor)
-		pkg.StartServer(":3000", s)
+		// s := pkg.NewServer(appController, repomonitor)
+		// pkg.StartServer(":3000", s)
 	},
 }
 
