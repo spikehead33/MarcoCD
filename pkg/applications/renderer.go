@@ -2,8 +2,7 @@ package applications
 
 import (
 	"bytes"
-	"fmt"
-	"marcocd/pkg/infras/manifest_reader"
+	"marcocd/pkg/domains"
 	"os"
 	"text/template"
 )
@@ -13,28 +12,21 @@ type TemplateRenderer interface {
 }
 
 type ModuleTemplateRenderer struct {
-	manifestPath   string
-	manifestReader manifest_reader.ModuleManifestReader
+	moduleManifest *domains.ModuleManifest
 }
 
-func NewModuleTemplateRenderer(path string, manifestReader manifest_reader.ModuleManifestReader) TemplateRenderer {
+func NewModuleTemplateRenderer(moduleManifest *domains.ModuleManifest) TemplateRenderer {
 	return &ModuleTemplateRenderer{
-		manifestPath:   path,
-		manifestReader: manifestReader,
+		moduleManifest: moduleManifest,
 	}
 }
 
 func (renderer *ModuleTemplateRenderer) Render() ([]string, error) {
-	manifest, err := renderer.manifestReader.Read(renderer.manifestPath)
-	if err != nil {
-		return nil, err
-	}
-
 	jobSpecs := []string{}
-
-	for _, deliverable := range manifest.Deliverables {
+	for _, deliverable := range renderer.moduleManifest.Deliverables {
 		for _, templateFilePath := range deliverable.Resources {
-			jobSpec, err := render(templateFilePath, manifest.Values)
+			jobSpec, err := render(
+				templateFilePath, renderer.moduleManifest.Values)
 			if err != nil {
 				return nil, err
 			}
@@ -47,8 +39,6 @@ func (renderer *ModuleTemplateRenderer) Render() ([]string, error) {
 }
 
 func render(templateFilePath string, values map[string]interface{}) (string, error) {
-	fmt.Println(templateFilePath)
-
 	f, err := os.ReadFile(templateFilePath)
 	if err != nil {
 		return "", err

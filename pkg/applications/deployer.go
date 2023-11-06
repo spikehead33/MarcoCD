@@ -10,7 +10,7 @@ type Deployer interface {
 	Deploy(string) error
 }
 
-type deployer struct {
+type moduleDeployer struct {
 	nc       *nomad.Client
 	renderer TemplateRenderer
 }
@@ -18,13 +18,13 @@ type deployer struct {
 func NewDeployer(
 	nc *nomad.Client,
 	renderer TemplateRenderer) Deployer {
-	return &deployer{
+	return &moduleDeployer{
 		nc:       nc,
 		renderer: renderer,
 	}
 }
 
-func (d *deployer) Deploy(module string) error {
+func (d *moduleDeployer) Deploy(module string) error {
 	jobSpecs, err := d.renderer.Render()
 	if err != nil {
 		return err

@@ -8,6 +8,7 @@ require (
 	github.com/go-git/go-git/v5 v5.10.0
 	github.com/hashicorp/nomad/api v0.0.0-20230103221135-ce00d683f9be
 	github.com/spf13/cobra v1.7.0
+	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 

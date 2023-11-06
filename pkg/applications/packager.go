@@ -1,7 +1,7 @@
 package applications
 
 import (
-	"marcocd/pkg/infras/manifest_reader"
+	"marcocd/pkg/domains"
 	"marcocd/pkg/infras/tar_executor"
 )
 
@@ -10,34 +10,28 @@ type Packager interface {
 }
 
 type packager struct {
-	in             string
+	manifestPath   string
 	ou             string
 	version        string
-	manifestReader manifest_reader.ModuleManifestReader
+	moduleManifest *domains.ModuleManifest
 	tarExecutor    tar_executor.TarExecutor
 }
 
 func NewPackager(
 	in, ou, version string,
-	manifestReader manifest_reader.ModuleManifestReader,
+	moduleManifest *domains.ModuleManifest,
 	tarExecutor tar_executor.TarExecutor) Packager {
 	return &packager{
-		in:             in,
 		ou:             ou,
 		version:        version,
-		manifestReader: manifestReader,
+		moduleManifest: moduleManifest,
 		tarExecutor:    tarExecutor,
 	}
 }
 
 func (pack *packager) Package() error {
-	manifest, err := pack.manifestReader.Read(pack.in)
-	if err != nil {
-		return err
-	}
-
-	deliverables := manifest.Deliverables
-	resources := []string{pack.in} // add the marcocd.yaml, the manifest into the tar target
+	deliverables := pack.moduleManifest.Deliverables
+	resources := []string{pack.manifestPath} // add the marcocd.yaml, the manifest into the tar target
 
 	for _, deliverables := range deliverables {
 		resources = append(resources, deliverables.Resources...)
@@ -45,7 +39,7 @@ func (pack *packager) Package() error {
 
 	output := pack.ou
 	if pack.ou == "" {
-		output = manifest.Name + "_" + pack.version + ".tar"
+		output = pack.moduleManifest.Name + "_" + pack.version + ".tar"
 	}
 
 	return pack.tarExecutor.Tar(output, resources)

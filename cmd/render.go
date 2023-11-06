@@ -6,13 +6,13 @@ package cmd
 import (
 	"fmt"
 	"marcocd/pkg/applications"
-	"marcocd/pkg/infras/manifest_reader"
+	"marcocd/pkg/domains"
 
 	"github.com/spf13/cobra"
 )
 
 type renderFlags struct {
-	manfestPath string
+	manifest string
 }
 
 var renFlags renderFlags
@@ -23,9 +23,15 @@ var renderCmd = &cobra.Command{
 	Short: "render a module with given values",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		moduleManifest, err := domains.NewModuleManifestFromFile(
+			renFlags.manifest,
+		)
+		if err != nil {
+			panic(err)
+		}
+
 		templateRenderer := applications.NewModuleTemplateRenderer(
-			renFlags.manfestPath,
-			manifest_reader.NewModuleManifestReader(),
+			moduleManifest,
 		)
 
 		jobSpecs, err := templateRenderer.Render()
@@ -41,5 +47,5 @@ var renderCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(renderCmd)
-	renderCmd.Flags().StringVar(&renFlags.manfestPath, "manfestPath", "marcocd.yaml", "module root path")
+	renderCmd.Flags().StringVar(&renFlags.manifest, "manifestPath", "marcocd.yaml", "module root path")
 }
