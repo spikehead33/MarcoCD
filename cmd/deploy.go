@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"marcocd/pkg/applications"
-	"marcocd/pkg/infras/manifest_reader"
+	"marcocd/pkg/domains"
 
 	nomad "github.com/hashicorp/nomad/api"
 	"github.com/spf13/cobra"
@@ -18,14 +18,19 @@ type deployFlags struct {
 
 var dFlags deployFlags
 
-// deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "deploy a marcocd module",
 	Long:  `Deploy a marcocd into nomad cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
-		renderer := applications.NewModuleTemplateRenderer(
-			dFlags.manifestPath, manifest_reader.NewModuleManifestReader())
+		moduleManifest, err := domains.NewModuleManifestFromFile(
+			dFlags.manifestPath,
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		renderer := applications.NewModuleTemplateRenderer(moduleManifest)
 
 		nc, err := nomad.NewClient(nomad.DefaultConfig())
 		if err != nil {
@@ -41,6 +46,5 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(deployCmd)
-	deployCmd.Flags().StringVar(&dFlags.moduleName, "module", "", "module to be deploy to the nomad")
 	renderCmd.Flags().StringVar(&dFlags.manifestPath, "manifestPath", "marcocd.yaml", "module root path")
 }

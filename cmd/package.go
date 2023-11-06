@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"marcocd/pkg/applications"
-	"marcocd/pkg/infras/manifest_reader"
+	"marcocd/pkg/domains"
 	"marcocd/pkg/infras/tar_executor"
 
 	"github.com/spf13/cobra"
@@ -25,11 +25,18 @@ var packageCmd = &cobra.Command{
 	Short: "package a macrocd module",
 	Long:  `package a marcocd module into a zipped Tarball`,
 	Run: func(cmd *cobra.Command, args []string) {
+		moduleManifest, err := domains.NewModuleManifestFromFile(
+			pFlags.manifestPath,
+		)
+		if err != nil {
+			panic(err)
+		}
+
 		packager := applications.NewPackager(
 			pFlags.manifestPath,
 			pFlags.output,
 			pFlags.version,
-			manifest_reader.NewModuleManifestReader(),
+			moduleManifest,
 			tar_executor.TarExecutor{},
 		)
 		if err := packager.Package(); err != nil {

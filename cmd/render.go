@@ -12,29 +12,28 @@ import (
 )
 
 type renderFlags struct {
-	manifest string
+	manifestPath string
 }
 
 var renFlags renderFlags
 
-// renderCmd represents the render command
 var renderCmd = &cobra.Command{
 	Use:   "render",
 	Short: "render a module with given values",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		moduleManifest, err := domains.NewModuleManifestFromFile(
-			renFlags.manifest,
+			renFlags.manifestPath,
 		)
 		if err != nil {
 			panic(err)
 		}
 
-		templateRenderer := applications.NewModuleTemplateRenderer(
+		renderer := applications.NewModuleTemplateRenderer(
 			moduleManifest,
 		)
 
-		jobSpecs, err := templateRenderer.Render()
+		jobSpecs, err := renderer.Render()
 		if err != nil {
 			panic(err)
 		}
@@ -47,5 +46,5 @@ var renderCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(renderCmd)
-	renderCmd.Flags().StringVar(&renFlags.manifest, "manifestPath", "marcocd.yaml", "module root path")
+	renderCmd.Flags().StringVar(&renFlags.manifestPath, "manifestPath", "marcocd.yaml", "module root path")
 }
