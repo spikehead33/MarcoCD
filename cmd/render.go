@@ -31,10 +31,6 @@ var renderCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-
-		// for _, job := range jobs {
-		// 	fmt.Println(job)
-		// }
 	},
 }
 

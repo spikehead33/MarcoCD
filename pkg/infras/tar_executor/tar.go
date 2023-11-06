@@ -1,7 +1,8 @@
 package tar_executor
 
 import (
-	"fmt"
+	"bytes"
+	"errors"
 	"os/exec"
 )
 
@@ -12,11 +13,12 @@ func (executor *TarExecutor) Tar(tarName string, files []string) error {
 	args := []string{"-cf", tarName}
 	args = append(args, files...)
 
-	fmt.Println(args)
+	var cmdErr bytes.Buffer
 
 	cmd := exec.Command("tar", args...)
+	cmd.Stderr = &cmdErr
 	if err := cmd.Run(); err != nil {
-		return err
+		return errors.New(cmdErr.String())
 	}
 
 	return nil
@@ -25,9 +27,12 @@ func (executor *TarExecutor) Tar(tarName string, files []string) error {
 func (executor *TarExecutor) UnTar(file string) error {
 	args := []string{"-xf", file}
 
+	var cmdErr bytes.Buffer
+
 	cmd := exec.Command("tar", args...)
+	cmd.Stderr = &cmdErr
 	if err := cmd.Run(); err != nil {
-		return err
+		return errors.New(cmdErr.String())
 	}
 
 	return nil
