@@ -6,12 +6,10 @@ import (
 	"marcocd/pkg/infras/manifest_reader"
 	"os"
 	"text/template"
-
-	nomad "github.com/hashicorp/nomad/api"
 )
 
 type TemplateRenderer interface {
-	Render() ([]*nomad.Job, error)
+	Render() ([]string, error)
 }
 
 type ModuleTemplateRenderer struct {
@@ -26,47 +24,45 @@ func NewModuleTemplateRenderer(path string, manifestReader manifest_reader.Modul
 	}
 }
 
-func (renderer *ModuleTemplateRenderer) Render() ([]*nomad.Job, error) {
+func (renderer *ModuleTemplateRenderer) Render() ([]string, error) {
 	manifest, err := renderer.manifestReader.Read(renderer.manifestPath)
 	if err != nil {
 		return nil, err
 	}
 
-	jobs := []*nomad.Job{}
+	jobSpecs := []string{}
 
 	for _, deliverable := range manifest.Deliverables {
 		for _, templateFilePath := range deliverable.Resources {
-			job, err := render(templateFilePath, manifest.Values)
+			jobSpec, err := render(templateFilePath, manifest.Values)
 			if err != nil {
 				return nil, err
 			}
 
-			jobs = append(jobs, job)
+			jobSpecs = append(jobSpecs, jobSpec)
 		}
 	}
 
-	return jobs, nil
+	return jobSpecs, nil
 }
 
-func render(templateFilePath string, values map[string]interface{}) (*nomad.Job, error) {
+func render(templateFilePath string, values map[string]interface{}) (string, error) {
 	fmt.Println(templateFilePath)
 
 	f, err := os.ReadFile(templateFilePath)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	tmpl, err := template.New(templateFilePath).Parse(string(f))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	var b bytes.Buffer
 	if err = tmpl.Execute(&b, values); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	fmt.Println(b.String())
-
-	return nil, nil
+	return b.String(), nil
 }

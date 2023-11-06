@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"marcocd/pkg/applications"
 	"marcocd/pkg/infras/manifest_reader"
 
@@ -27,14 +28,18 @@ var renderCmd = &cobra.Command{
 			manifest_reader.NewModuleManifestReader(),
 		)
 
-		_, err := templateRenderer.Render()
+		jobSpecs, err := templateRenderer.Render()
 		if err != nil {
 			panic(err)
+		}
+
+		for _, jobSpec := range jobSpecs {
+			fmt.Println(jobSpec)
 		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(renderCmd)
-	renderCmd.Flags().StringVar(&renFlags.manfestPath, "manifestPath", "marcocd.yaml", "module root path")
+	renderCmd.Flags().StringVar(&renFlags.manfestPath, "manfestPath", "marcocd.yaml", "module root path")
 }

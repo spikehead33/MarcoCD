@@ -4,10 +4,19 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
+	"marcocd/pkg/applications"
+	"marcocd/pkg/infras/manifest_reader"
 
+	nomad "github.com/hashicorp/nomad/api"
 	"github.com/spf13/cobra"
 )
+
+type deployFlags struct {
+	moduleName   string
+	manifestPath string
+}
+
+var dFlags deployFlags
 
 // deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
@@ -15,20 +24,23 @@ var deployCmd = &cobra.Command{
 	Short: "deploy a marcocd module",
 	Long:  `Deploy a marcocd into nomad cluster`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deploy called")
+		renderer := applications.NewModuleTemplateRenderer(
+			dFlags.manifestPath, manifest_reader.NewModuleManifestReader())
+
+		nc, err := nomad.NewClient(nomad.DefaultConfig())
+		if err != nil {
+			panic(err)
+		}
+
+		deployer := applications.NewDeployer(nc, renderer)
+		if err = deployer.Deploy(dFlags.moduleName); err != nil {
+			panic(err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deployCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deployCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// deployCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	deployCmd.Flags().StringVar(&dFlags.moduleName, "module", "", "module to be deploy to the nomad")
+	renderCmd.Flags().StringVar(&dFlags.manifestPath, "manifestPath", "marcocd.yaml", "module root path")
 }
