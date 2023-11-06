@@ -12,7 +12,6 @@ import (
 )
 
 type deployFlags struct {
-	moduleName   string
 	manifestPath string
 }
 
