@@ -7,24 +7,27 @@ import (
 )
 
 type Deployer interface {
-	Deploy(string) error
+	Deploy() error
 }
 
 type moduleDeployer struct {
-	nc       *nomad.Client
-	renderer TemplateRenderer
+	nc         *nomad.Client
+	moduleName string
+	renderer   TemplateRenderer
 }
 
 func NewDeployer(
+	moduleName string,
 	nc *nomad.Client,
 	renderer TemplateRenderer) Deployer {
 	return &moduleDeployer{
-		nc:       nc,
-		renderer: renderer,
+		moduleName: moduleName,
+		nc:         nc,
+		renderer:   renderer,
 	}
 }
 
-func (d *moduleDeployer) Deploy(module string) error {
+func (d *moduleDeployer) Deploy() error {
 	jobSpecs, err := d.renderer.Render()
 	if err != nil {
 		return err
@@ -38,7 +41,7 @@ func (d *moduleDeployer) Deploy(module string) error {
 			return err
 		}
 
-		job.SetMeta("module", module)
+		job.SetMeta("module", d.moduleName)
 		job.SetMeta("managed-by", "marcocd")
 		res, _, _ := jobHandler.Register(job, nil)
 		fmt.Println(res.EvalID)

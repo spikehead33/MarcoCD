@@ -36,7 +36,7 @@ var deployCmd = &cobra.Command{
 			panic(err)
 		}
 
-		deployer := applications.NewDeployer(nc, renderer)
+		deployer := applications.NewDeployer(moduleManifest.Name, nc, renderer)
 		if err = deployer.Deploy(); err != nil {
 			panic(err)
 		}
