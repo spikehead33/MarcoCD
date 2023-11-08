@@ -7,6 +7,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type rootFlags struct {
+	manifestPath string
+}
+
+var rtFlags rootFlags
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "marcocd",

@@ -45,5 +45,5 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(deployCmd)
-	renderCmd.Flags().StringVar(&dFlags.manifestPath, "manifestPath", "marcocd.yaml", "module root path")
+	deployCmd.Flags().StringVar(&dFlags.manifestPath, "manifestPath", "marcocd.yaml", "module root path")
 }

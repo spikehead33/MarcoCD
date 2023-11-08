@@ -28,5 +28,5 @@ func NewModuleManifestFromFile(manifestPath string) (*ModuleManifest, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	return &moduleManifest, nil
 }

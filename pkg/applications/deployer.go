@@ -36,6 +36,8 @@ func (d *moduleDeployer) Deploy() error {
 	jobHandler := d.nc.Jobs()
 
 	for _, jobSpec := range jobSpecs {
+		fmt.Println(jobSpec)
+
 		job, err := jobHandler.ParseHCL(jobSpec, false)
 		if err != nil {
 			return err
@@ -43,7 +45,10 @@ func (d *moduleDeployer) Deploy() error {
 
 		job.SetMeta("module", d.moduleName)
 		job.SetMeta("managed-by", "marcocd")
-		res, _, _ := jobHandler.Register(job, nil)
+		res, _, err := jobHandler.Register(job, nil)
+		if err != nil {
+			return err
+		}
 		fmt.Println(res.EvalID)
 	}
 
