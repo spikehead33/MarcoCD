@@ -49,5 +49,5 @@ func init() {
 	rootCmd.AddCommand(packageCmd)
 	packageCmd.Flags().StringVar(&pFlags.manifestPath, "manifestPath", "marcocd.yaml", "module root path")
 	packageCmd.Flags().StringVar(&pFlags.version, "version", "0.0.0", "package version")
-	packageCmd.Flags().StringVar(&pFlags.output, "output", "", "output of the packaged files")
+	packageCmd.Flags().StringVar(&pFlags.output, "name", "", "package name")
 }
